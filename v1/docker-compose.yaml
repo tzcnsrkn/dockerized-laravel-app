@@ -32,5 +32,16 @@ services:
       dockerfile: composer.dockerfile
     volumes:
       - ./src:/var/www/html
-  # artisan:
-  # npm:
+  artisan:         # same dockerfile as phpapp is fine as it needs php
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    entrypoint: ["php", "/var/www/html/artisan"]          # overriding/adding the setting (ENTRYPOINT) inside dockerfile
+  npm:
+    image: node:20
+    working_dir: /var/www/html
+    entrypoint: ["npm"]
+    volumes:
+      - ./src:/var/www/html
