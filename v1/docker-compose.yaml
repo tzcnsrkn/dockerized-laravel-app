@@ -1,7 +1,15 @@
 # 6 different services to be defined
 services:
   server:
-    image: nginx:stable-alpine
+    # adapted for prod deployment strategy
+    # image: nginx:stable-alpine    
+    # below 3 lines will fail as the context needs to see src/ and nginx/
+    # build:
+    #   context: ./dockerfiles
+    #   dockerfile: nginx.dockerfile    
+    build:
+      context: .
+      dockerfile: dockerfiles/nginx.dockerfile
     ports:
       - '8000:80'
     volumes:
@@ -12,9 +20,12 @@ services:
       - mysql
 
   phpapp:
+    # adjusted below for the same purpose mentioned for "server".
     build:
-      context: ./dockerfiles
-      dockerfile: php.dockerfile
+      context: .
+      dockerfile: dockerfiles/php.dockerfile
+    # The prod deployment strategy is to eliminate the need of defining bind mounts 
+      # in app level (phpapp).
     volumes:
       - ./src:/var/www/html:delegate    # delegate: optimization for writing to host in batches
                                         # ro: is not an option here as e.g. view files needs to be generated which needs
@@ -34,8 +45,8 @@ services:
       - ./src:/var/www/html
   artisan:         # same dockerfile as phpapp is fine as it needs php
     build:
-      context: ./dockerfiles
-      dockerfile: php.dockerfile
+      context: .
+      dockerfile: dockerfiles/php.dockerfile
     volumes:
       - ./src:/var/www/html
     entrypoint: ["php", "/var/www/html/artisan"]          # overriding/adding the setting (ENTRYPOINT) inside dockerfile
