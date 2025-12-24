@@ -7,7 +7,6 @@ services:
     volumes:
       - ./src:/var/www/html
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro     # ro: container should never change the conf.
-      # - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - phpapp
       - mysql
